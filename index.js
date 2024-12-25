@@ -106,8 +106,10 @@ const initSession = (clientID_, setConnect, debug)=>{
     let user = sessionStorage.getItem('user');
     let token = '';
 
-    if (session != null && session != undefined) {
+    // @ts-ignore
+    if (session != null && session != undefined && user != null & user !== undefined) {
         token = session;
+        // @ts-ignore
         connectTwitch(user, session, setConnect, debug);
       }
       else {
