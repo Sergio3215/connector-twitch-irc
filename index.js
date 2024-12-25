@@ -8,9 +8,9 @@ const Tmi = require("tmi.js");
 
 /**
  * 
- * @author Principiante En Programar
+ * @author SerezDev
  * 
- * @copyright Copyright (c) Principiante En Programar
+ * @copyright Copyright (c) SerezDev
  * 
  * @description An extension for do more easy the connection on Twitch, and use for many cases
  * 
@@ -20,33 +20,36 @@ const Tmi = require("tmi.js");
 /**
  * Connect directly to Twitch using sessionStorage and any function for set the connection variable.
  * 
- * @param {Object} session The session of getted from sessionStorage object.
+ * @param {string} user The name of user.
+ * @param {string} myToken The string of token generated.
  * @param {Function} setConnect This is the function for get the connect of twitch data. 
  * 
  */
-const connectTwitch = async ({ user, myToken }, setConnect) => {
+const connectTwitch = async (user, myToken, setConnect, debug) => {
     let client = {};
 
     client = new Tmi.Client({
         options: {
-            debug: false,
-            reconnect: true
+            debug: debug,
+            reconnect: true,
+            secure: true
         },
         identity: {
             username: user,
-            password: myToken
+            password: myToken.includes("oauth") ? myToken : "oauth:" + myToken
         },
         channels: [user]
     });
 
-    if (location.hash.includes('#access_token=')) {
+    if (location.hash.includes('#access_token=') && myToken != undefined) {
 
-        sessionStorage.setItem('access_token', JSON.stringify(
-            {
-                user: user,
-                myToken: myToken
-            }
-        ));
+        if (myToken.includes("oauth")) {
+            sessionStorage.setItem('access_token', myToken.split("oauth:")[1]);
+        }
+        else {
+            sessionStorage.setItem('access_token', myToken);
+        }
+        sessionStorage.setItem('user', user);
 
         location.href = location.origin;
     }
@@ -67,12 +70,10 @@ const getAccount = async (token, clientID_, setConnect) => {
             if (obj.status == undefined) {
                 let myObj = obj.data[0];
 
-                let login = {
-                    user: myObj.login,
-                    myToken: "oauth:" + token
-                }
+                let user = myObj.login,
+                    myToken = "oauth:" + token
 
-                connectTwitch(login, setConnect)
+                connectTwitch(user, myToken, setConnect, false)
             }
         })
         .catch(err => {
@@ -93,8 +94,28 @@ const getAccount = async (token, clientID_, setConnect) => {
 async function connectToStream(token, clientID_, setConnect) {
     await getAccount(token, clientID_, setConnect);
 }
+/**
+ * 
+ * @param {String} clientID_ this client id is the id of your project
+ * @param {function} setConnect It is a function where recive or get the connection
+ * @param {Boolean} debug boolean for debugger the connection.
+ */
+const initSession = (clientID_, setConnect, debug)=>{
+
+    let session = sessionStorage.getItem('access_token');
+    let user = sessionStorage.getItem('user');
+    let token = '';
+
+    if (session != null && session != undefined) {
+        token = session;
+        connectTwitch(user, session, setConnect, debug);
+      }
+      else {
+        token = location.hash.split('=')[1].split('&')[0];
+        connectToStream(token, clientID_, setConnect);
+      }
+}
 
 module.exports = {
-    connectToStream,
-    connectTwitch
+    initSession
 }

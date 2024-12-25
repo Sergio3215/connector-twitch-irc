@@ -12,7 +12,7 @@ npm i connector-twitch-irc
 
 Imported the component connector-twitch-irc
 ```js
-import { connectToStream, connectTwitch } from 'connector-twitch-irc';
+import { initSession } from 'connector-twitch-irc';
 ```
 Set your client ID of the app twitch
 ```js
@@ -28,31 +28,17 @@ Set the link redirect for get the permissions of twitch on you app
 </button>
 ```
 
-Use the functions _**connectTwitch**_ and  _**connectToStream**_ for that you can connect on twitch stream
+Use the function **initSession** for conection directly with tmi.js and twitch
 ```jsx
   const [connect, setConnect] = useState({});
-
   useEffect(() => {
     try {
-
-      let session = sessionStorage.getItem('access_token');
-      let token = '';
-
       if (!_loadingEffect) {
-        if (session != null && session != undefined) {
-          token = session;
-          connectTwitch(session, setConnect);
-        }
-        else {
-          token = location.hash.split('=')[1].split('&')[0];
-          connectToStream(token, clientID_, setConnect);
-        }
-
+        initSession(clientID_, setConnect, false);
       }
     } catch (error) {
 
     }
-
   }, []);
 ```
 
@@ -60,19 +46,23 @@ Use the functions _**connectTwitch**_ and  _**connectToStream**_ for that you ca
 #### the scope for this example is 'chat%3Aread+chat%3Aedit' (It is for read and edit message chat). I you need another permissions you need check of documentation of Twitch.
 
 # 💻 Connect with sessionStorage
-#### We need to use **_connectTwitch_**. This method use the sessionStorage as **_session_** variable. The variable **_session_** is an object where this variable has follow properties.
-#### user: where you get the user session.
-#### myToken: where you have the token.
+#### We are going to go connected the token and user on session storage, where you save this one.
+#### It is automatically.
 
-# 📱 Connect without sessionStorage
-#### We need to use **_connectToStream_**. This method has as parameter the token from hash link.
+# 💻 initSession
+#### The function initSession is called when you need init this.
+#### you have 3 params.
+#### clientID_
+#### setConnect
+#### debug
+
+
+# 💻 Debug
+#### You can set debug in the console of devtools on browser, it is a function for logger.
 
 # 💻 Client ID
 #### The client id is getted from twitch Developer Console. You can enter in the follow link : <a hred="https://dev.twitch.tv/">Twitch Develope</a>
 
-
-# 👨🏼‍💻 setConnect
-#### The set connect in the case of React js is for get the variable connect. In the case of Vanilla Js is an any function where you get as parameter an connector.
 
 # 🤓 Code of Example with React JS
 
@@ -90,29 +80,18 @@ export default function Home() {
 
   useEffect(() => {
     try {
-
-      let session = sessionStorage.getItem('access_token');
-      let token = '';
-
       if (!_loadingEffect) {
-        if (session != null && session != undefined) {
-          token = session;
-          connectTwitch(session, setConnect);
-        }
-        else {
-          token = location.hash.split('=')[1].split('&')[0];
-          connectToStream(token, clientID_, setConnect);
-        }
-
+        initSession(clientID_, setConnect, false);
+        _loadingEffect = !_loadingEffect;
       }
     } catch (error) {
 
     }
-
   }, []);
 
   useEffect(() => {
     console.log(connect);
+    connect.connect().catch(console.error);
   }, [connect])
 
   return (
@@ -129,3 +108,11 @@ export default function Home() {
 }
 
 ```
+
+# 📈 Version
+
+### Version 1.1.4
+#### Fix the error with connection in twitch
+
+### Version 1.0.1
+#### Fix the issue "Error connection on Twitch"
