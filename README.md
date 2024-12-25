@@ -46,28 +46,24 @@ Use the function **initSession** for conection directly with tmi.js and twitch
 #### the scope for this example is 'chat%3Aread+chat%3Aedit' (It is for read and edit message chat). I you need another permissions you need check of documentation of Twitch.
 
 # 💻 Connect with sessionStorage
-#### We are going to go connected the token and user on session storage, where you save this one.
-#### It is automatically.
+#### We are going to go connected the token and user on session storage, where you save this one. It is automatically.
 
 # 💻 initSession
 #### The function initSession is called when you need init this.
-#### you have 3 params.
-#### clientID_
-#### setConnect
-#### debug
+#### You have 3 params: clientID_, setConnect, debug
 
 
 # 💻 Debug
 #### You can set debug in the console of devtools on browser, it is a function for logger.
 
 # 💻 Client ID
-#### The client id is getted from twitch Developer Console. You can enter in the follow link : <a hred="https://dev.twitch.tv/">Twitch Develope</a>
+#### The client id is getted from twitch Developer Console. You can enter in the follow link : <a href="https://dev.twitch.tv/">Twitch Develope</a>
 
 
 # 🤓 Code of Example with React JS
 
 ```jsx
-import { connectToStream, connectTwitch } from 'connector-twitch-irc';
+import { initSession } from 'connector-twitch-irc';
 import { useEffect, useState } from "react";
 
 const _loadingEffect = false;
@@ -96,7 +92,7 @@ export default function Home() {
 
   return (
     <>
-      <main className={`${styles.main} ${inter.className}`}>
+      <main>
         <button onClick={(
           () => {
             location.href = `https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=${clientID_}&redirect_uri=${location.origin}&scope=chat%3Aread+chat%3Aedit`
