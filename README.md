@@ -107,7 +107,7 @@ export default function Home() {
 
 # 📈 Version
 
-### Version 1.1.4
+### Version 1.1.6
 #### Fix the error with connection in twitch
 
 ### Version 1.0.1
